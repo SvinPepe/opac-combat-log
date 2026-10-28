@@ -50,7 +50,7 @@ jobs:
       - name: Publish to Modrinth
         uses: Kira-NT/mc-publish@v3.3.2
         with:
-          modrinth-id: opac-combat-log
+          modrinth-id: TMGXQEZH
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           files: neoforge/build/libs/opac-combatlog-*.jar
           name: OPAC Combat Log ${{ github.event.release.tag_name || inputs.version || github.ref_name }}
@@ -62,4 +62,4 @@ jobs:
           loaders: |
             neoforge
           dependencies: |
-            open-parties-and-claims(required)
+            gF3BGWvG(required)
