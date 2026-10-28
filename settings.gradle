@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            url = 'https://maven.neoforged.net/releases'
+        }
+        maven {
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            url = 'https://maven.kikugie.dev/releases'
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'opac-combatlog'
+
+include 'common'
+include 'neoforge'
+include 'fabric'
+include 'forge'

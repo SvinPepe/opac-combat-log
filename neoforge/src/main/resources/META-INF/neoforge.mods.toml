@@ -1,0 +1,37 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://github.com/SvinPepe/opac-combatlog/issues"
+showAsResourcePack=false
+
+[[mods]]
+modId="opac_combatlog"
+version="${mod_version}"
+displayName="Open Parties and Claims: Combat Log"
+displayURL="https://github.com/SvinPepe/opac-combatlog"
+authors="${mod_authors}"
+credits="Built for servers that use Open Parties and Claims as the claim ownership system."
+description='''
+Server-only combat log with OPAC safezone boundary protection, anti-cheat teleport rollback, container lock, and kill credit.
+'''
+
+[[dependencies.opac_combatlog]]
+modId="neoforge"
+type="required"
+versionRange="${neo_version_range}"
+ordering="NONE"
+side="SERVER"
+
+[[dependencies.opac_combatlog]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="SERVER"
+
+[[dependencies.opac_combatlog]]
+modId="openpartiesandclaims"
+type="required"
+versionRange="[0.27.5,)"
+ordering="AFTER"
+side="SERVER"

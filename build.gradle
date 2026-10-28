@@ -1,0 +1,148 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.1.39' apply false
+    id 'idea'
+}
+
+group = 'dev.customclaims'
+version = mod_version
+
+ext.combatLogModules = [
+        'common'  : [
+                modId      : 'opac_combatlog_common',
+                modName    : 'OPAC Combat Log - Common',
+                description: 'Core domain services and OPAC boundary hooks for OPAC Combat Log.'
+        ],
+        'neoforge': [
+                modId      : 'opac_combatlog',
+                modName    : 'Open Parties and Claims: Combat Log (NeoForge)',
+                description: 'NeoForge distribution of OPAC Combat Log.'
+        ],
+        'fabric'  : [
+                modId      : 'opac_combatlog_fabric',
+                modName    : 'Open Parties and Claims: Combat Log (Fabric)',
+                description: 'Fabric distribution of OPAC Combat Log.'
+        ],
+        'forge'   : [
+                modId      : 'opac_combatlog_forge',
+                modName    : 'Open Parties and Claims: Combat Log (Forge)',
+                description: 'Forge distribution of OPAC Combat Log.'
+        ]
+]
+
+subprojects {
+    def moduleInfo = rootProject.ext.combatLogModules[project.name]
+    if (moduleInfo == null) {
+        throw new GradleException("Missing Combat Log module metadata for ${project.name}")
+    }
+
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'net.neoforged.gradle.userdev'
+
+    group = rootProject.group
+    version = rootProject.version
+
+    ext.mod_id = moduleInfo.modId
+    ext.mod_name = moduleInfo.modName
+    ext.mod_description = moduleInfo.description
+
+    base {
+        archivesName = moduleInfo.modId
+    }
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://maven.neoforged.net/releases'
+        }
+        maven {
+            url = 'https://api.modrinth.com/maven'
+        }
+    }
+
+    sourceSets.main.resources {
+        srcDir 'src/generated/resources'
+        exclude('**/*.bbmodel')
+        exclude('src/generated/**/.cache')
+    }
+
+    configurations {
+        runtimeClasspath.extendsFrom localRuntime
+    }
+
+    dependencies {
+        implementation "net.neoforged:neoforge:${neo_version}"
+        compileOnly "maven.modrinth:open-parties-and-claims:${opc_version}"
+        localRuntime "maven.modrinth:open-parties-and-claims:${opc_version}"
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(ProcessResources).configureEach {
+        def replaceProperties = [
+                minecraft_version      : minecraft_version,
+                minecraft_version_range: minecraft_version_range,
+                neo_version            : neo_version,
+                neo_version_range      : neo_version_range,
+                loader_version_range   : loader_version_range,
+                mod_id                 : project.ext.mod_id,
+                mod_name               : project.ext.mod_name,
+                mod_license            : mod_license,
+                mod_version            : mod_version,
+                mod_authors            : mod_authors,
+                mod_description        : project.ext.mod_description
+        ]
+
+        inputs.properties replaceProperties
+
+        filesMatching(['META-INF/neoforge.mods.toml', 'META-INF/mods.toml', 'fabric.mod.json']) {
+            expand replaceProperties
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}
+
+project(':neoforge') {
+    dependencies {
+        implementation project(':common')
+    }
+
+    tasks.named('jar', Jar).configure {
+        archiveBaseName.set('opac-combatlog')
+        archiveVersion.set(rootProject.version.toString())
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        dependsOn project(':common').tasks.named('jar')
+
+        from(project(':common').sourceSets.main.output)
+
+        manifest {
+            attributes([
+                    'Specification-Title'   : 'Open Parties and Claims: Combat Log',
+                    'Specification-Vendor'  : 'svinpepe',
+                    'Specification-Version' : rootProject.version.toString(),
+                    'Implementation-Title'  : 'Open Parties and Claims: Combat Log',
+                    'Implementation-Vendor' : 'svinpepe',
+                    'Implementation-Version': rootProject.version.toString()
+            ])
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

@@ -1,0 +1,16 @@
+// Stonecutter controller configuration for OPAC Combat Log
+// Multi-version & multi-loader project configuration
+// Reference: https://stonecutter.kikugie.dev/
+
+plugins {
+    id 'dev.kikugie.stonecutter' version '0.9.8' apply false
+}
+
+stonecutter.active "1.21.1"
+
+stonecutter.parameters {
+    // 1.20.1: Java 17/21, Forge 47.x, Fabric 0.15.x
+    // 1.21.1: Java 21, NeoForge 21.1.x, Fabric 0.16.x
+    // 26.1:   Java 21/25, NeoForge 26.1.x, Fabric 0.17.x
+    // 26.3:   Java 21/25, NeoForge 26.3.x, Fabric 0.17.x, Forge 26.3.x
+}
