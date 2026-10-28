@@ -1,4 +1,4 @@
-name: Publish to Modrinth
+name: Publish Release (Modrinth & CurseForge)
 
 on:
   release:
@@ -25,7 +25,7 @@ on:
 
 jobs:
   publish:
-    name: Build & Publish to Modrinth
+    name: Build & Publish Mod
     runs-on: ubuntu-latest
 
     steps:
@@ -49,6 +49,7 @@ jobs:
 
       - name: Publish to Modrinth
         uses: Kira-NT/mc-publish@v3.3.2
+        continue-on-error: true
         with:
           modrinth-id: TMGXQEZH
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -63,3 +64,20 @@ jobs:
             neoforge
           dependencies: |
             gF3BGWvG(required)
+
+      - name: Publish to CurseForge
+        uses: Kira-NT/mc-publish@v3.3.2
+        with:
+          curseforge-id: '1771429'
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: neoforge/build/libs/opac-combatlog-*.jar
+          name: OPAC Combat Log ${{ github.event.release.tag_name || inputs.version || github.ref_name }}
+          version: ${{ github.event.release.tag_name || inputs.version || github.ref_name }}
+          version-type: ${{ github.event.release.prerelease && 'beta' || inputs.version_type || 'release' }}
+          changelog: ${{ github.event.release.body || inputs.changelog || 'Release of OPAC Combat Log' }}
+          game-versions: |
+            1.21.1
+          loaders: |
+            neoforge
+          dependencies: |
+            open-parties-and-claims(required)
