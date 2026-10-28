@@ -1,0 +1,39 @@
+name: Update Modrinth Project Page
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'MODRINTH.md'
+    branches:
+      - master
+
+jobs:
+  update-modrinth:
+    name: Sync Project Description to Modrinth
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update Modrinth Project Body
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          python3 -c "import json; open('payload.json', 'w', encoding='utf-8').write(json.dumps({'body': open('MODRINTH.md', 'r', encoding='utf-8').read()}))"
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH "https://api.modrinth.com/v2/project/TMGXQEZH" \
+            -H "Authorization: $MODRINTH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d @payload.json)
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "HTTP Response Code: $HTTP_CODE"
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Successfully updated Modrinth project description!"
+          else
+            echo "Failed to update Modrinth project page: $BODY"
+            exit 1
+          fi
