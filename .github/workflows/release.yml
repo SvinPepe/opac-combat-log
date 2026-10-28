@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew build --stacktrace
 
       - name: Publish to Modrinth
-        uses: Kira-NT/mc-publish@v1
+        uses: Kira-NT/mc-publish@v3.3.2
         with:
           modrinth-id: opac-combat-log
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
