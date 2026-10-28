@@ -1,0 +1,65 @@
+name: Publish to Modrinth
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+      version_type:
+        description: 'Version type'
+        required: true
+        type: choice
+        options:
+          - release
+          - beta
+          - alpha
+        default: 'release'
+      changelog:
+        description: 'Changelog / Release notes'
+        required: false
+        default: 'Release of OPAC Combat Log for NeoForge 1.21.1'
+
+jobs:
+  publish:
+    name: Build & Publish to Modrinth
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Mod Jar
+        run: ./gradlew build --stacktrace
+
+      - name: Publish to Modrinth
+        uses: KirigamiPlatform/publish-mod@v1
+        with:
+          modrinth-id: opac-combat-log
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: neoforge/build/libs/opac-combatlog-*.jar
+          name: OPAC Combat Log ${{ github.event.release.tag_name || inputs.version || github.ref_name }}
+          version: ${{ github.event.release.tag_name || inputs.version || github.ref_name }}
+          version-type: ${{ github.event.release.prerelease && 'beta' || inputs.version_type || 'release' }}
+          changelog: ${{ github.event.release.body || inputs.changelog || 'Release of OPAC Combat Log' }}
+          game-versions: |
+            1.21.1
+          loaders: |
+            neoforge
+          dependencies: |
+            open-parties-and-claims(required)
