@@ -24,6 +24,7 @@ jobs:
           
           RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH "https://api.modrinth.com/v2/project/TMGXQEZH" \
             -H "Authorization: $MODRINTH_TOKEN" \
+            -H "User-Agent: SvinPepe/opac-combat-log (https://github.com/SvinPepe/opac-combat-log)" \
             -H "Content-Type: application/json" \
             -d @payload.json)
           
