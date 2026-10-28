@@ -2,11 +2,6 @@ name: Update Modrinth Project Page
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'MODRINTH.md'
-    branches:
-      - master
 
 jobs:
   update-modrinth:
