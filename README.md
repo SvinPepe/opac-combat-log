@@ -1,4 +1,4 @@
-# Open Parties and Claims: Combat Log (`opac_combatlog`)
+# Open Parties and Claims: Combat Log
 
 [![Build](https://github.com/SvinPepe/opac-combat-log/actions/workflows/build.yml/badge.svg)](https://github.com/SvinPepe/opac-combat-log/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
