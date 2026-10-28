@@ -7,7 +7,6 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownPotion;
 
 public final class PvPDamageResolver {
 
@@ -24,7 +23,7 @@ public final class PvPDamageResolver {
         if (causing instanceof ServerPlayer player) {
             attacker = player;
         }
-        // 2. Projectiles (Arrows, Tridents, Wind Charges)
+        // 2. Projectiles (Arrows, Tridents, Wind Charges, Thrown Potions)
         else if (direct instanceof Projectile projectile && projectile.getOwner() instanceof ServerPlayer player) {
             attacker = player;
         }
@@ -32,11 +31,7 @@ public final class PvPDamageResolver {
         else if (direct instanceof AreaEffectCloud cloud && cloud.getOwner() instanceof ServerPlayer player) {
             attacker = player;
         }
-        // 4. Thrown potions
-        else if (direct instanceof ThrownPotion potion && potion.getOwner() instanceof ServerPlayer player) {
-            attacker = player;
-        }
-        // 5. Tamed pets (Wolves, etc.)
+        // 4. Tamed pets (Wolves, etc.)
         else if (causing instanceof TamableAnimal pet && pet.getOwner() instanceof ServerPlayer player) {
             attacker = player;
         }

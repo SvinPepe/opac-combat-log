@@ -18,16 +18,31 @@ public final class CombatLogConfig {
     public int combatDurationSeconds = 15;
     public boolean untagOnEnemyDeath = true;
     public boolean disableFlight = true;
+    public boolean restoreFlightAfterCombat = true;
     public boolean blockContainers = true;
     public boolean blockPortals = true;
     public boolean blockEnderPearlsIntoClaims = true;
+    public boolean blockChorusFruitIntoClaims = true;
     public boolean broadcastCombatLog = true;
     public boolean actionbarNotification = true;
+    public boolean operatorBypass = false;
     public double knockbackStrength = 0.5;
     public List<String> blockedCommands = new ArrayList<>(List.of(
             "spawn", "home", "sethome", "tp", "tpa", "tpaccept", "tpahere",
             "warp", "back", "rtp", "openpac", "opac"
     ));
+
+    public void sanitize() {
+        if (combatDurationSeconds <= 0) {
+            combatDurationSeconds = 15;
+        }
+        if (knockbackStrength < 0.0) {
+            knockbackStrength = 0.5;
+        }
+        if (blockedCommands == null) {
+            blockedCommands = new ArrayList<>();
+        }
+    }
 
     public static CombatLogConfig load(Path configDir) {
         Path configFile = configDir.resolve("opac-combatlog.json");
@@ -37,6 +52,7 @@ public final class CombatLogConfig {
             try (Reader reader = Files.newBufferedReader(configFile)) {
                 CombatLogConfig loaded = GSON.fromJson(reader, CombatLogConfig.class);
                 if (loaded != null) {
+                    loaded.sanitize();
                     config = loaded;
                 }
             } catch (Exception e) {

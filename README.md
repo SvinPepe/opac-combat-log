@@ -1,5 +1,6 @@
 # Open Parties and Claims: Combat Log (`opac_combatlog`)
 
+[![Build](https://github.com/SvinPepe/opac-combat-log/actions/workflows/build.yml/badge.svg)](https://github.com/SvinPepe/opac-combat-log/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-orange.svg)](https://neoforged.net/)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%20%7C%2026.x-green.svg)](https://minecraft.net/)
@@ -47,11 +48,14 @@ A high-performance, battle-hardened **Server-Only** combat log mod for Minecraft
   "combatDurationSeconds": 15,
   "untagOnEnemyDeath": true,
   "disableFlight": true,
+  "restoreFlightAfterCombat": true,
   "blockContainers": true,
   "blockPortals": true,
   "blockEnderPearlsIntoClaims": true,
+  "blockChorusFruitIntoClaims": true,
   "broadcastCombatLog": true,
   "actionbarNotification": true,
+  "operatorBypass": false,
   "knockbackStrength": 0.5,
   "blockedCommands": [
     "spawn",

@@ -6,10 +6,14 @@ import java.util.UUID;
 public final class CombatTag {
     private final UUID opponentUuid;
     private final String opponentName;
-    private long expiresAtMillis;
-    private final Optional<UUID> originClaimOwner;
+    private volatile long expiresAtMillis;
+    private final UUID originClaimOwner;
 
     public CombatTag(UUID opponentUuid, String opponentName, long expiresAtMillis, Optional<UUID> originClaimOwner) {
+        this(opponentUuid, opponentName, expiresAtMillis, originClaimOwner != null ? originClaimOwner.orElse(null) : null);
+    }
+
+    public CombatTag(UUID opponentUuid, String opponentName, long expiresAtMillis, UUID originClaimOwner) {
         this.opponentUuid = opponentUuid;
         this.opponentName = opponentName;
         this.expiresAtMillis = expiresAtMillis;
@@ -33,7 +37,7 @@ public final class CombatTag {
     }
 
     public Optional<UUID> getOriginClaimOwner() {
-        return originClaimOwner;
+        return Optional.ofNullable(originClaimOwner);
     }
 
     public boolean isExpired() {

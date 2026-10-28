@@ -22,5 +22,5 @@ rootProject.name = 'opac-combatlog'
 
 include 'common'
 include 'neoforge'
-include 'fabric'
-include 'forge'
+// include 'fabric'
+// include 'forge'

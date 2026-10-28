@@ -9,9 +9,7 @@ import dev.customclaims.combatlog.platform.PlatformHelperHolder;
 import dev.customclaims.combatlog.service.CombatInteractionLock;
 import dev.customclaims.combatlog.service.PvPDamageResolver;
 import java.util.Optional;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
@@ -123,7 +121,7 @@ public final class OpacCombatLogNeoForge {
 
     private void onEnderPearlTeleport(EntityTeleportEvent.EnderPearl event) {
         ServerPlayer player = event.getPlayer();
-        if (player == null || !OpacCombatLog.getManager().isInCombat(player)) {
+        if (player == null || OpacCombatLog.getManager().hasBypass(player)) {
             return;
         }
 
@@ -132,34 +130,38 @@ public final class OpacCombatLogNeoForge {
         }
 
         CombatTag tag = OpacCombatLog.getManager().getTag(player.getUUID());
+        if (tag == null || tag.isExpired()) {
+            return;
+        }
+
         ChunkPos targetChunk = new ChunkPos((int) Math.floor(event.getTargetX()) >> 4, (int) Math.floor(event.getTargetZ()) >> 4);
 
         if (!OpacCombatHook.canEnterChunk(player.serverLevel(), targetChunk, tag)) {
             event.setCanceled(true);
-            player.sendSystemMessage(
-                    Component.literal("⚔ You cannot pearl into a claim while in combat!")
-                            .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
-                    true
-            );
+            CombatInteractionLock.notifyEnderPearlBlocked(player);
         }
     }
 
     private void onChorusFruitTeleport(EntityTeleportEvent.ChorusFruit event) {
         LivingEntity living = event.getEntityLiving();
-        if (!(living instanceof ServerPlayer player) || !OpacCombatLog.getManager().isInCombat(player)) {
+        if (!(living instanceof ServerPlayer player) || OpacCombatLog.getManager().hasBypass(player)) {
+            return;
+        }
+
+        if (!OpacCombatLog.getConfig().blockChorusFruitIntoClaims) {
             return;
         }
 
         CombatTag tag = OpacCombatLog.getManager().getTag(player.getUUID());
+        if (tag == null || tag.isExpired()) {
+            return;
+        }
+
         ChunkPos targetChunk = new ChunkPos((int) Math.floor(event.getTargetX()) >> 4, (int) Math.floor(event.getTargetZ()) >> 4);
 
         if (!OpacCombatHook.canEnterChunk(player.serverLevel(), targetChunk, tag)) {
             event.setCanceled(true);
-            player.sendSystemMessage(
-                    Component.literal("⚔ You cannot teleport into a claim while in combat!")
-                            .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
-                    true
-            );
+            CombatInteractionLock.notifyChorusFruitBlocked(player);
         }
     }
 }

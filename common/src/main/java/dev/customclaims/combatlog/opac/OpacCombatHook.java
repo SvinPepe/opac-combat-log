@@ -45,8 +45,8 @@ public final class OpacCombatHook {
             }
 
             return Optional.of(claimPlayerId);
-        } catch (Throwable t) {
-            LOGGER.debug("Error checking claim owner with OPAC: {}", t.getMessage());
+        } catch (Exception e) {
+            LOGGER.warn("Error checking claim owner with OPAC: {}", e.getMessage());
             return Optional.empty();
         }
     }

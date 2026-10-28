@@ -18,6 +18,7 @@ import net.minecraft.world.level.ChunkPos;
 public final class CombatManager {
     private final CombatLogConfig config;
     private final Map<UUID, CombatTag> activeTags = new ConcurrentHashMap<>();
+    private final Map<UUID, Boolean> hadMayFly = new ConcurrentHashMap<>();
     private final ClaimBoundaryService claimBoundaryService = new ClaimBoundaryService();
     private long tickCounter = 0L;
 
@@ -33,8 +34,15 @@ public final class CombatManager {
         return claimBoundaryService;
     }
 
-    public boolean isInCombat(ServerPlayer player) {
+    public boolean hasBypass(ServerPlayer player) {
         if (player == null) {
+            return false;
+        }
+        return config.operatorBypass && player.hasPermissions(2);
+    }
+
+    public boolean isInCombat(ServerPlayer player) {
+        if (player == null || hasBypass(player)) {
             return false;
         }
         CombatTag tag = getTag(player.getUUID());
@@ -55,15 +63,18 @@ public final class CombatManager {
             return;
         }
 
+        if (hasBypass(player1) || hasBypass(player2)) {
+            return;
+        }
+
         long now = System.currentTimeMillis();
         long expiry = now + (config.combatDurationSeconds * 1000L);
 
-        ServerLevel level = player1.serverLevel();
-        ChunkPos combatChunk = player1.chunkPosition();
-        Optional<UUID> originClaim = OpacCombatHook.getClaimOwner(level, combatChunk);
+        Optional<UUID> originClaim1 = OpacCombatHook.getClaimOwner(player1.serverLevel(), player1.chunkPosition());
+        Optional<UUID> originClaim2 = OpacCombatHook.getClaimOwner(player2.serverLevel(), player2.chunkPosition());
 
-        tagPlayer(player1, player2, expiry, originClaim);
-        tagPlayer(player2, player1, expiry, originClaim);
+        tagPlayer(player1, player2, expiry, originClaim1);
+        tagPlayer(player2, player1, expiry, originClaim2);
     }
 
     private void tagPlayer(ServerPlayer player, ServerPlayer opponent, long expiry, Optional<UUID> originClaim) {
@@ -71,6 +82,9 @@ public final class CombatManager {
         CombatTag existing = activeTags.get(uuid);
 
         if (existing == null || existing.isExpired()) {
+            if (!player.isCreative() && !player.isSpectator()) {
+                hadMayFly.put(uuid, player.getAbilities().mayfly);
+            }
             activeTags.put(uuid, new CombatTag(opponent.getUUID(), opponent.getScoreboardName(), expiry, originClaim));
             sendActionbar(player, Component.literal("⚔ In Combat with " + opponent.getScoreboardName() + "! (" + config.combatDurationSeconds + "s)")
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
@@ -87,6 +101,7 @@ public final class CombatManager {
 
     public void untag(UUID playerUuid) {
         activeTags.remove(playerUuid);
+        hadMayFly.remove(playerUuid);
         claimBoundaryService.removePlayer(playerUuid);
     }
 
@@ -110,6 +125,18 @@ public final class CombatManager {
         }
     }
 
+    public void restoreFlightIfNeeded(ServerPlayer player) {
+        if (player == null || !config.restoreFlightAfterCombat) {
+            return;
+        }
+        UUID uuid = player.getUUID();
+        Boolean hadFlight = hadMayFly.remove(uuid);
+        if (Boolean.TRUE.equals(hadFlight) && !player.isCreative() && !player.isSpectator()) {
+            player.getAbilities().mayfly = true;
+            player.onUpdateAbilities();
+        }
+    }
+
     public void handlePlayerDeath(ServerPlayer deceased) {
         UUID deceasedUuid = deceased.getUUID();
         untag(deceasedUuid);
@@ -122,6 +149,7 @@ public final class CombatManager {
                     if (opponent != null) {
                         sendActionbar(opponent, Component.literal("⚔ Opponent defeated! You are no longer in combat.")
                                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+                        restoreFlightIfNeeded(opponent);
                     }
                     untag(uuid);
                 }
@@ -154,7 +182,9 @@ public final class CombatManager {
                 : player.damageSources().genericKill();
 
         player.hurt(killSource, Float.MAX_VALUE);
-        player.kill();
+        if (player.isAlive()) {
+            player.kill();
+        }
 
         untag(uuid);
     }
@@ -173,6 +203,7 @@ public final class CombatManager {
             if (tag.isExpired()) {
                 sendActionbar(player, Component.literal("⚔ You are no longer in combat.")
                         .withStyle(ChatFormatting.GREEN));
+                restoreFlightIfNeeded(player);
                 untag(uuid);
                 return;
             }

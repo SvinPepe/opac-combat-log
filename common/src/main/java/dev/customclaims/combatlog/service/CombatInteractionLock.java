@@ -38,4 +38,20 @@ public final class CombatInteractionLock {
                 true
         );
     }
+
+    public static void notifyEnderPearlBlocked(ServerPlayer player) {
+        player.sendSystemMessage(
+                Component.literal("⚔ You cannot pearl into a claim while in combat!")
+                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+                true
+        );
+    }
+
+    public static void notifyChorusFruitBlocked(ServerPlayer player) {
+        player.sendSystemMessage(
+                Component.literal("⚔ You cannot teleport into a claim while in combat!")
+                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+                true
+        );
+    }
 }
