@@ -35,3 +35,10 @@ type="required"
 versionRange="[0.27.5,)"
 ordering="AFTER"
 side="SERVER"
+
+[[dependencies.opac_combatlog]]
+modId="opac_warfare"
+type="optional"
+versionRange="[2.0.0,)"
+ordering="AFTER"
+side="SERVER"

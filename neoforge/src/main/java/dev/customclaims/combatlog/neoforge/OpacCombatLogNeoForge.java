@@ -10,6 +10,7 @@ import dev.customclaims.combatlog.service.CombatInteractionLock;
 import dev.customclaims.combatlog.service.PvPDamageResolver;
 import java.util.Optional;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
@@ -41,7 +42,11 @@ public final class OpacCombatLogNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onEntityTravelToDimension);
         NeoForge.EVENT_BUS.addListener(this::onEnderPearlTeleport);
+        //? if <26.0 {
         NeoForge.EVENT_BUS.addListener(this::onChorusFruitTeleport);
+        //?} else {
+        /*NeoForge.EVENT_BUS.addListener(this::onItemConsumptionTeleport);
+        *///?}
     }
 
     private void onLivingDamage(LivingDamageEvent.Post event) {
@@ -136,12 +141,13 @@ public final class OpacCombatLogNeoForge {
 
         ChunkPos targetChunk = new ChunkPos((int) Math.floor(event.getTargetX()) >> 4, (int) Math.floor(event.getTargetZ()) >> 4);
 
-        if (!OpacCombatHook.canEnterChunk(player.serverLevel(), targetChunk, tag)) {
+        if (!OpacCombatHook.canEnterChunk((ServerLevel) player.level(), targetChunk, tag)) {
             event.setCanceled(true);
             CombatInteractionLock.notifyEnderPearlBlocked(player);
         }
     }
 
+    //? if <26.0 {
     private void onChorusFruitTeleport(EntityTeleportEvent.ChorusFruit event) {
         LivingEntity living = event.getEntityLiving();
         if (!(living instanceof ServerPlayer player) || OpacCombatLog.getManager().hasBypass(player)) {
@@ -159,9 +165,32 @@ public final class OpacCombatLogNeoForge {
 
         ChunkPos targetChunk = new ChunkPos((int) Math.floor(event.getTargetX()) >> 4, (int) Math.floor(event.getTargetZ()) >> 4);
 
-        if (!OpacCombatHook.canEnterChunk(player.serverLevel(), targetChunk, tag)) {
+        if (!OpacCombatHook.canEnterChunk((ServerLevel) player.level(), targetChunk, tag)) {
             event.setCanceled(true);
             CombatInteractionLock.notifyChorusFruitBlocked(player);
         }
     }
+    //?} else {
+    /*private void onItemConsumptionTeleport(EntityTeleportEvent.ItemConsumption event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || OpacCombatLog.getManager().hasBypass(player)) {
+            return;
+        }
+
+        if (!OpacCombatLog.getConfig().blockChorusFruitIntoClaims) {
+            return;
+        }
+
+        CombatTag tag = OpacCombatLog.getManager().getTag(player.getUUID());
+        if (tag == null || tag.isExpired()) {
+            return;
+        }
+
+        ChunkPos targetChunk = new ChunkPos((int) Math.floor(event.getTargetX()) >> 4, (int) Math.floor(event.getTargetZ()) >> 4);
+
+        if (!OpacCombatHook.canEnterChunk((ServerLevel) player.level(), targetChunk, tag)) {
+            event.setCanceled(true);
+            CombatInteractionLock.notifyChorusFruitBlocked(player);
+        }
+    }
+    *///?}
 }

@@ -1,5 +1,7 @@
 package dev.customclaims.combatlog.opac;
 
+import dev.customclaims.combatlog.OpacCombatLog;
+import dev.customclaims.combatlog.compat.WarfareCompat;
 import dev.customclaims.combatlog.model.CombatTag;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +18,18 @@ public final class OpacCombatHook {
     private static final Logger LOGGER = LoggerFactory.getLogger("OPACCombatLog");
 
     public static Optional<UUID> getClaimOwner(ServerLevel level, ChunkPos chunkPos) {
+        if (level == null) {
+            return Optional.empty();
+        }
+
+        try {
+            var config = OpacCombatLog.getConfig();
+            if (config != null && config.treatWarChunksAsWilderness && WarfareCompat.isContestedWarChunk(level, chunkPos)) {
+                return Optional.empty();
+            }
+        } catch (Exception ignored) {
+        }
+
         MinecraftServer server = level.getServer();
         if (server == null) {
             return Optional.empty();
@@ -27,7 +41,11 @@ public final class OpacCombatHook {
                 return Optional.empty();
             }
 
+            //? if <26.0 {
             IPlayerChunkClaimAPI claim = api.getServerClaimsManager().get(level.dimension().location(), chunkPos);
+            //?} else {
+            /*IPlayerChunkClaimAPI claim = api.getServerClaimsManager().get(level.dimension().identifier(), chunkPos);
+            *///?}
             if (claim == null) {
                 return Optional.empty();
             }

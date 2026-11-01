@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "opac_combatlog",
+  "version": "${mod_version}",
+  "name": "Open Parties and Claims: Combat Log",
+  "description": "Server-only combat log with OPAC safezone boundary protection, anti-cheat teleport rollback, container lock, and kill credit.",
+  "authors": [
+    "svinpepe"
+  ],
+  "contact": {
+    "homepage": "https://github.com/SvinPepe/opac-combatlog",
+    "sources": "https://github.com/SvinPepe/opac-combatlog",
+    "issues": "https://github.com/SvinPepe/opac-combatlog/issues"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.customclaims.combatlog.fabric.OpacCombatLogFabricMod"
+    ]
+  },
+  "mixins": [
+    "opac_combatlog.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": ">=1.20.1",
+    "openpartiesandclaims": "*"
+  },
+  "suggests": {
+    "opac_warfare": ">=2.0.0"
+  }
+}

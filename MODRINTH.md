@@ -1,6 +1,6 @@
 # ⚔️ OPAC: Combat Log
 
-**Stop claim-camping and PvP abuse.** A lightweight, server-side combat logging mod built specifically for **Open Parties and Claims (OPAC)**.
+**Stop claim-camping and PvP abuse.** A lightweight, server-side combat logging mod built specifically for **Open Parties and Claims (OPAC)** with dedicated support for **OPAC: Warfare**.
 
 ---
 
@@ -14,10 +14,21 @@ Standard combat log mods have zero awareness of OPAC claims or safezone subclaim
 
 ---
 
+### 🤝 Companion Mod: Open Parties and Claims: Warfare
+
+**OPAC: Combat Log** fully integrates with **[Open Parties and Claims: Warfare](https://modrinth.com/mod/open-parties-and-claims-warfare)**:
+* **War Chunks as Wilderness:** Contested chunks under active war or siege are dynamically treated as wilderness:
+  * Players fighting inside war zones will **never be knocked back or ejected** by claim boundaries.
+  * Ender Pearls and Chorus Fruit can be freely utilized within contested siege sectors.
+  * Players in combat within war chunks are **prevented from fleeing into peaceful, uncontested claims**.
+* **Zero Hard Dependency:** The mod automatically activates this behavior when Warfare is detected on the server, while running without issues if Warfare is absent.
+
+---
+
 ### ✨ Core Features
 
 #### 🛡️ Native OPAC Claim & Safezone Integration
-* **Anti-Safezone Camping:** If combat starts in unclaimed territory (wilderness), tagged players are physically barred from entering ANY claimed land or safezone.
+* **Anti-Safezone Camping:** If combat starts in unclaimed territory (wilderness or active war chunk), tagged players are physically barred from entering ANY claimed land or safezone.
 * **Origin Claim Memory:** If a battle starts inside a claimed base, players can fight within that claim, but are prevented from fleeing to neighboring third-party claims.
 * **Smart Boundary Pushback:** Trying to sprint-jump, ride a vehicle, or exploit client prediction into a forbidden claim results in a clean server-side pushback with zero-velocity rollback and barrier audio cues.
 
@@ -38,18 +49,25 @@ Standard combat log mods have zero awareness of OPAC claims or safezone subclaim
 
 ---
 
-### 📦 Installation & Requirements
+### 📦 Platform & Version Matrix
+
+* **Minecraft 1.20.1**: Forge, Fabric
+* **Minecraft 1.21.1**: NeoForge, Fabric
+* **Minecraft 26.1**: NeoForge
+
+### 📦 Installation
 1. Install **[Open Parties and Claims](https://modrinth.com/mod/open-parties-and-claims)** on your server.
-2. Drop **OPAC: Combat Log** into your server's `mods` folder.
-3. Restart your server. That's it!
+2. *(Optional)* Install **[Open Parties and Claims: Warfare](https://modrinth.com/mod/open-parties-and-claims-warfare)** for territorial chunk wars and siege warfare.
+3. Drop **OPAC: Combat Log** into your server's `mods` folder.
+4. Restart your server. That's it!
 
 > 💡 **Client-Side:** Not required! Clients can join with completely vanilla Minecraft.
 
 ---
 
 ### ⚙️ Configuration & Documentation
-Every aspect — combat tag duration, knockback strength, flight behavior, container lock, and command blacklists — is fully customizable in `config/opac-combatlog.json`.
+Every aspect — combat tag duration, knockback strength, warfare wilderness toggle (`treatWarChunksAsWilderness`), flight behavior, container lock, and command blacklists — is fully customizable in `config/opac-combatlog.json`.
 
-* 📖 **[Configuration Guide & Default Config on GitHub](https://github.com/SvinPepe/opac-combat-log#readme)**
-* 🐛 **[Issue Tracker & Suggestions](https://github.com/SvinPepe/opac-combat-log/issues)**
-* 💻 **[Source Code](https://github.com/SvinPepe/opac-combat-log)**
+* 📖 **[Configuration Guide & Documentation on GitHub](https://github.com/SvinPepe/opac-combatlog#readme)**
+* 🐛 **[Issue Tracker & Suggestions](https://github.com/SvinPepe/opac-combatlog/issues)**
+* 💻 **[Source Code](https://github.com/SvinPepe/opac-combatlog)**

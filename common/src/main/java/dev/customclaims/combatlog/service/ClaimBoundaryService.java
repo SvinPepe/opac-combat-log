@@ -33,7 +33,7 @@ public final class ClaimBoundaryService {
             return true;
         }
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = (ServerLevel) player.level();
         ChunkPos targetChunk = new ChunkPos((int) Math.floor(targetX) >> 4, (int) Math.floor(targetZ) >> 4);
 
         if (OpacCombatHook.canEnterChunk(level, targetChunk, tag)) {
@@ -74,7 +74,7 @@ public final class ClaimBoundaryService {
             player.hurtMarked = true;
         }
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = (ServerLevel) player.level();
         level.playSound(
                 null,
                 lastValid.x, lastValid.y, lastValid.z,

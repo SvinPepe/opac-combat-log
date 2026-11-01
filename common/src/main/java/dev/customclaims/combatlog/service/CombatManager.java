@@ -35,10 +35,16 @@ public final class CombatManager {
     }
 
     public boolean hasBypass(ServerPlayer player) {
-        if (player == null) {
+        if (player == null || !config.operatorBypass) {
             return false;
         }
-        return config.operatorBypass && player.hasPermissions(2);
+        //? if <26.0 {
+        return player.createCommandSourceStack().hasPermission(2);
+        //?} else {
+        /*var server = player.level().getServer();
+        if (server == null) return false;
+        return server.getPlayerList().isOp(new net.minecraft.server.players.NameAndId(player.getUUID(), player.getScoreboardName()));
+        *///?}
     }
 
     public boolean isInCombat(ServerPlayer player) {
@@ -70,8 +76,8 @@ public final class CombatManager {
         long now = System.currentTimeMillis();
         long expiry = now + (config.combatDurationSeconds * 1000L);
 
-        Optional<UUID> originClaim1 = OpacCombatHook.getClaimOwner(player1.serverLevel(), player1.chunkPosition());
-        Optional<UUID> originClaim2 = OpacCombatHook.getClaimOwner(player2.serverLevel(), player2.chunkPosition());
+        Optional<UUID> originClaim1 = OpacCombatHook.getClaimOwner((ServerLevel) player1.level(), player1.chunkPosition());
+        Optional<UUID> originClaim2 = OpacCombatHook.getClaimOwner((ServerLevel) player2.level(), player2.chunkPosition());
 
         tagPlayer(player1, player2, expiry, originClaim1);
         tagPlayer(player2, player1, expiry, originClaim2);
@@ -145,7 +151,7 @@ public final class CombatManager {
             // If the opponent is only fighting this deceased player, untag the opponent immediately
             activeTags.forEach((uuid, tag) -> {
                 if (tag.getOpponentUuid().equals(deceasedUuid)) {
-                    ServerPlayer opponent = deceased.server.getPlayerList().getPlayer(uuid);
+                    ServerPlayer opponent = deceased.level().getServer() != null ? deceased.level().getServer().getPlayerList().getPlayer(uuid) : null;
                     if (opponent != null) {
                         sendActionbar(opponent, Component.literal("⚔ Opponent defeated! You are no longer in combat.")
                                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
@@ -166,7 +172,12 @@ public final class CombatManager {
             return;
         }
 
-        MinecraftServer server = player.server;
+        MinecraftServer server = player.level().getServer();
+        if (server == null) {
+            untag(uuid);
+            return;
+        }
+
         ServerPlayer opponent = server.getPlayerList().getPlayer(tag.getOpponentUuid());
 
         if (config.broadcastCombatLog) {
@@ -183,7 +194,11 @@ public final class CombatManager {
 
         player.hurt(killSource, Float.MAX_VALUE);
         if (player.isAlive()) {
+            //? if <26.0 {
             player.kill();
+            //?} else {
+            /*player.kill((ServerLevel) player.level());
+            *///?}
         }
 
         untag(uuid);

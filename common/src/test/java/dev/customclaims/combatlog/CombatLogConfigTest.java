@@ -18,6 +18,7 @@ class CombatLogConfigTest {
         assertTrue(config.knockbackStrength > 0);
         assertTrue(config.restoreFlightAfterCombat);
         assertTrue(config.blockChorusFruitIntoClaims);
+        assertTrue(config.treatWarChunksAsWilderness);
         assertFalse(config.operatorBypass);
         assertNotNull(config.blockedCommands);
 
@@ -40,6 +41,7 @@ class CombatLogConfigTest {
         assertTrue(Files.exists(tempDir.resolve("opac-combatlog.json")));
         assertTrue(loaded.restoreFlightAfterCombat);
         assertTrue(loaded.blockChorusFruitIntoClaims);
+        assertTrue(loaded.treatWarChunksAsWilderness);
         assertFalse(loaded.operatorBypass);
     }
 }

@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "dev.customclaims.combatlog.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CommandsMixin",
+    "LivingEntityChorusMixin",
+    "ServerPlayerDimensionMixin",
+    "ThrownEnderpearlMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

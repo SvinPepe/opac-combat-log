@@ -26,6 +26,7 @@ public final class CombatLogConfig {
     public boolean broadcastCombatLog = true;
     public boolean actionbarNotification = true;
     public boolean operatorBypass = false;
+    public boolean treatWarChunksAsWilderness = true;
     public double knockbackStrength = 0.5;
     public List<String> blockedCommands = new ArrayList<>(List.of(
             "spawn", "home", "sethome", "tp", "tpa", "tpaccept", "tpahere",

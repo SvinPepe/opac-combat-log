@@ -5,6 +5,8 @@ run/
 runs/
 repo/
 *.log
+*.log.gz
+**/logs/
 *.iml
 .idea/
 .vscode/
