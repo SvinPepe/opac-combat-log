@@ -51,6 +51,7 @@ public final class WarfareCompat {
         try {
             Class<?> holderClass = Class.forName("dev.customclaims.api.war.WarfareBridgeHolder");
             checkMethod = holderClass.getMethod("isContestedWarChunk", ServerLevel.class, ChunkPos.class);
+            checkMethod.setAccessible(true);
             warfareAvailable = true;
             LOGGER.info("OPAC Warfare integration bridge initialized successfully via dev.customclaims.api.war.WarfareBridgeHolder");
         } catch (Throwable t) {
