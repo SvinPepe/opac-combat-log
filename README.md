@@ -1,6 +1,6 @@
 # Open Parties and Claims: Combat Log
 
-[![Build](https://github.com/SvinPepe/opac-combatlog/actions/workflows/build.yml/badge.svg)](https://github.com/SvinPepe/opac-combatlog/actions)
+[![Build](https://github.com/SvinPepe/opac-combatlog/actions/workflows/build.yml/badge.svg)](https://github.com/SvinPepe/opac-combat-log/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![NeoForge](https://img.shields.io/badge/NeoForge-21.1+%20%7C%2026.x-orange.svg)](https://neoforged.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.16+-blue.svg)](https://fabricmc.net/)
